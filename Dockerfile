@@ -1,7 +1,11 @@
 FROM python:3.9-slim
-WORKDIR /app
-COPY . /app
-RUN pip install flask
-EXPOSE 80
-CMD ["python", "src/app.py"]
 
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install flask pytest
+
+EXPOSE 80
+
+CMD ["python", "src/app.py"]
