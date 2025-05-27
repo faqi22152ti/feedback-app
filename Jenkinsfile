@@ -22,7 +22,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo '🧪 Running tests...'
-                sh 'docker run --rm $IMAGE_NAME pytest tests/'
+                sh 'docker run --rm feedback-app pytest tests/'
             }
         }
 
