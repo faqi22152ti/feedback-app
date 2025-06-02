@@ -1,11 +1,5 @@
-FROM python:3.9-slim
+FROM nginx:alpine
 
-WORKDIR /app
-
-COPY . /app
-
-RUN pip install flask pytest
+COPY index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
-
-CMD ["python", "src/app.py"]
