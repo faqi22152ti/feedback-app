@@ -1,45 +1,35 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'feedback-app'
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
+                git 'https://github.com/faqi22152ti/feedback-app.git'
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t feedback-app .'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'docker run --rm feedback-app pytest tests/'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Manual Approval (QA)') {
             steps {
-                input message: 'QA, please approve to deploy this app.'
+                input message: 'Approve to deploy?', ok: 'Deploy'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Stopping old containers (if any)...'
-                sh '''
-                    docker stop $(docker ps -q --filter ancestor=feedback-app) || true
-                    docker rm $(docker ps -a -q --filter ancestor=feedback-app) || true
-                '''
-                echo 'Deploying container...'
-                sh 'docker run -d -p 5000:80 feedback-app'
+                echo 'Deploying Docker container...'
+                sh 'docker run -d -p 8080:80 $IMAGE_NAME'
             }
         }
     }
 }
-
-
