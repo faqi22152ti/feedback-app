@@ -3,43 +3,46 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'feedback-app'
-        IMAGE_TAG = 'latest' // bisa kamu ubah sesuai kebutuhan
     }
 
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
+                git 'https://github.com/faqi22152ti/feedback-app.git'
             }
         }
 
         stage('Build') {
             steps {
-                echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}..."
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                echo "Building Docker image ${env.IMAGE_NAME}..."
+                sh "docker build -t ${env.IMAGE_NAME} ."
             }
         }
 
         stage('Manual Approval (QA)') {
             steps {
-                input message: 'Approve to deploy?', ok: 'Deploy'
+                script {
+                    // input dengan parameter nama approver
+                    def userInput = input(
+                        id: 'Approval', message: 'Approve to deploy?', parameters: [
+                            string(name: 'APPROVER_NAME', defaultValue: '', description: 'Masukkan nama Anda untuk approval')
+                        ]
+                    )
+                    // simpan nama approver ke environment variable supaya bisa dipakai di stage selanjutnya
+                    env.APPROVER = userInput
+                    echo "Approved by: ${env.APPROVER}"
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Deploying Docker container ${IMAGE_NAME}:${IMAGE_TAG}..."
-                // stop dan hapus container lama dulu (jika ada)
-                sh '''
-                if docker ps -q --filter "name=feedback-app-container" | grep -q .; then
-                    docker stop feedback-app-container
-                    docker rm feedback-app-container
-                fi
-                '''
-                // run container baru dengan nama agar gampang kontrol
-                sh "docker run -d --name feedback-app-container -p 8080:80 ${IMAGE_NAME}:${IMAGE_TAG}"
+                echo "Deploying Docker container by ${env.APPROVER}..."
+                sh "docker run -d --name feedback-app-container -p 8080:80 ${env.IMAGE_NAME}"
+                // optional simpan info approver ke file agar bisa dicek
+                sh "echo 'Approved by: ${env.APPROVER}' > approved-by.txt"
+                archiveArtifacts artifacts: 'approved-by.txt', fingerprint: true
             }
         }
     }
 }
-
