@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'APPROVAL', choices: ['Abort', 'Deploy'], description: 'QA approval required')
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -11,24 +15,20 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
+                echo 'Running dummy tests...'
                 sh './test/dummy-test.sh'
             }
         }
 
-        stage('Manual Approval (QA)') {
-            steps {
-                input message: 'QA, please approve to deploy this app.'
-            }
-        }
-
         stage('Deploy') {
+            when {
+                expression { params.APPROVAL == 'Deploy' }
+            }
             steps {
-                echo 'Stopping old containers (if any)...'
-                sh '''
-                    docker rm -f feedback-app-container || true
-                '''
-                echo 'Deploying container...'
+                echo 'Stopping old container if exists...'
+                sh 'docker rm -f feedback-app-container || true'
+                
+                echo 'Deploying new container...'
                 sh 'docker run -d --name feedback-app-container -p 8080:80 feedback-app'
             }
         }
