@@ -15,7 +15,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Running dummy tests...'
+                echo 'Running tests...'
                 sh './test/dummy-test.sh'
             }
         }
@@ -25,11 +25,13 @@ pipeline {
                 expression { params.APPROVAL == 'Deploy' }
             }
             steps {
-                echo 'Stopping old container if exists...'
-                sh 'docker rm -f feedback-app-container || true'
-                
-                echo 'Deploying new container...'
-                sh 'docker run -d --name feedback-app-container -p 8080:80 feedback-app'
+                echo 'Stopping old containers (if any)...'
+                sh '''
+                    docker stop $(docker ps -q --filter ancestor=feedback-app) || true
+                    docker rm $(docker ps -a -q --filter ancestor=feedback-app) || true
+                '''
+                echo 'Deploying container...'
+                sh 'docker run -d -p 5000:80 feedback-app'
             }
         }
     }
