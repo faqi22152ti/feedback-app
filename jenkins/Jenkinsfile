@@ -26,13 +26,11 @@ pipeline {
             steps {
                 echo 'Stopping old containers (if any)...'
                 sh '''
-                    docker stop $(docker ps -q --filter ancestor=feedback-app) || true
-                    docker rm $(docker ps -a -q --filter ancestor=feedback-app) || true
+                    docker rm -f feedback-app-container || true
                 '''
                 echo 'Deploying container...'
-                sh 'docker run -d -p 5000:80 feedback-app'
+                sh 'docker run -d --name feedback-app-container -p 8080:80 feedback-app'
             }
         }
     }
 }
-
