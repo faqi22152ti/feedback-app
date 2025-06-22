@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'feedback-app'
-        IMAGE_TAG = 'latest' // bisa kamu ubah sesuai kebutuhan
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -29,15 +29,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deploying Docker container ${IMAGE_NAME}:${IMAGE_TAG}..."
-                // stop dan hapus container lama dulu (jika ada)
                 sh '''
-                if docker ps -q --filter "name=feedback-app-container" | grep -q .; then
-                    docker stop feedback-app-container
-                    docker rm feedback-app-container
-                fi
+                docker stop feedback-app-container || true
+                docker rm feedback-app-container || true
+                docker run -d --name feedback-app-container -p 8080:5000 ${IMAGE_NAME}:${IMAGE_TAG}
                 '''
-                // run container baru dengan nama agar gampang kontrol
-                sh "docker run -d --name feedback-app-container -p 8080:80 ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
     }
