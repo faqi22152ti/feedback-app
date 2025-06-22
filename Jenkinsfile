@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
+                git 'https://github.com/faqi22152ti/feedback-app.git'
             }
         }
 
@@ -18,12 +18,6 @@ pipeline {
             steps {
                 echo 'Building Docker image feedback-app:latest...'
                 sh 'docker build -t $IMAGE_NAME .'
-            }
-        }
-
-        stage('Manual Approval (QA)') {
-            steps {
-                input message: 'Approve to deploy?', ok: 'Deploy or Abort'
             }
         }
 
