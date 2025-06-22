@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/faqi22152ti/feedback-app.git'
+                git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
             }
         }
 
