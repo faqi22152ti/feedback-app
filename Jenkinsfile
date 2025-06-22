@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/faqi22152ti/feedback-app.git'
+                git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
             }
         }
 
@@ -30,7 +30,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying Docker container feedback-app:latest...'
-                // stop & remove container kalau udah ada
                 sh '''
                     docker ps -q --filter name=$CONTAINER_NAME | grep -q . && docker stop $CONTAINER_NAME && docker rm $CONTAINER_NAME || true
                     docker run -d --name $CONTAINER_NAME -p $APP_PORT:80 $IMAGE_NAME
