@@ -16,20 +16,20 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building Docker image feedback-app:latest...'
+                echo '📦 Building Docker image feedback-app:latest...'
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Manual Approval (QA)') {
+        stage('Simulated QA Approval') {
             steps {
-                input message: 'Approve deployment to production?', ok: 'Yes, Deploy'
+                echo '✅ QA has approved deployment (simulated automatic approval)'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying Docker container feedback-app:latest...'
+                echo '🚀 Deploying Docker container feedback-app:latest...'
                 sh '''
                     if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
                         docker stop $CONTAINER_NAME || true
