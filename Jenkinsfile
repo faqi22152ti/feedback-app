@@ -6,13 +6,6 @@ pipeline {
         IMAGE_TAG = 'latest'
     }
 
-    #stages {
-        #stage('Clone Repo') {
-            #steps {
-                #git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
-            #}
-     #   }
-
         stage('Build') {
             steps {
                 echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}..."
