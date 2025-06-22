@@ -21,17 +21,21 @@ pipeline {
             }
         }
 
+        stage('Manual Approval (QA)') {
+            steps {
+                input message: 'Approve deployment to production?', ok: 'Yes, Deploy'
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo 'Deploying Docker container feedback-app:latest...'
                 sh '''
-                    # stop dan remove container kalau udah ada
                     if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
                         docker stop $CONTAINER_NAME || true
                         docker rm $CONTAINER_NAME || true
                     fi
 
-                    # jalankan container baru
                     docker run -d --name $CONTAINER_NAME -p $APP_PORT:80 $IMAGE_NAME
                 '''
             }
