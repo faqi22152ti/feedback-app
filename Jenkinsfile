@@ -6,12 +6,12 @@ pipeline {
         IMAGE_TAG = 'latest'
     }
 
-    stages {
-        stage('Clone Repo') {
-            steps {
-                git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
-            }
-        }
+    #stages {
+        #stage('Clone Repo') {
+            #steps {
+                #git branch: 'main', url: 'https://github.com/faqi22152ti/feedback-app.git'
+            #}
+     #   }
 
         stage('Build') {
             steps {
