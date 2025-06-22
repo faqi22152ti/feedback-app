@@ -21,11 +21,13 @@ pipeline {
             }
         }
 
-        stage('Simulated QA Approval') {
-            steps {
-                echo '✅ QA has approved deployment (simulated automatic approval)'
-            }
-        }
+       stage('Manual Approval (QA)') {
+    steps {
+        echo "⏳ Menunggu persetujuan QA..."
+        input message: 'Approve deployment?', ok: 'Yes, Deploy'
+        echo "✅ Disetujui QA! Lanjut ke deployment..."
+    }
+}
 
         stage('Deploy') {
             steps {
