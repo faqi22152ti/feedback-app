@@ -6,6 +6,7 @@ pipeline {
         IMAGE_TAG = 'latest'
     }
 
+    stages {
         stage('Build') {
             steps {
                 echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}..."
